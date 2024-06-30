@@ -36,7 +36,7 @@ function App() {
   async function fetchAccessToken() {
     try {
       const response = await fetch(
-        "https://heygenavatar-server.onrender.com/get-access-token",
+        "https://heygen-avatar-server.vercel.app/get-access-token",
         {
           method: "POST",
         }

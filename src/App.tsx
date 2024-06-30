@@ -9,7 +9,7 @@ import OpenAI from "openai";
 import { CanvasRender } from "./components/canvas-render";
 
 // Enter your OpenAI key here
-const openaiApiKey = "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";
+const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 // Set up OpenAI w/ API Key
 const openai = new OpenAI({
   apiKey: openaiApiKey,

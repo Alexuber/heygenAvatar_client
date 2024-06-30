@@ -1,0 +1,89 @@
+.HeyGenStreamingAvatar {
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  /* background-color: #282c34; */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.MediaPlayer {
+  display: flex;
+  width: 800px;
+  height: 400px;
+  justify-content: space-between;
+  /* margin-top: 50px; */
+}
+
+.Actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.InputField {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 16px;
+  outline: none;
+  width: 300px; /* Длина текстового поля */
+  transition: border-color 0.3s ease;
+  margin: 0 10px; /* Отступ для симметрии */
+}
+
+.InputField:hover,
+.InputField:focus {
+  border-color: #5b0e5b;
+}
+
+.InputField2 {
+  margin-left: 10px;
+  height: 20px;
+  width: 400px;
+}
+
+.LabelPair {
+  height: 50px;
+  display: row;
+  flex-direction: row;
+  align-items: start;
+}
+
+.icon {
+  width: 42px; /* Ширина иконок */
+  height: 42px; /* Высота иконок */
+}
+
+.startBtn {
+  width: 100px;
+  font-size: 12px;
+}

@@ -10,6 +10,7 @@ import { CanvasRender } from "./components/canvas-render";
 
 // Enter your OpenAI key here
 const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
+
 // Set up OpenAI w/ API Key
 const openai = new OpenAI({
   apiKey: openaiApiKey,
@@ -37,6 +38,7 @@ function App() {
     try {
       const response = await fetch(
         "https://heygenavatar-server.onrender.com/get-access-token",
+
         {
           method: "POST",
         }
@@ -247,9 +249,11 @@ function App() {
 
   return (
     <div className="HeyGenStreamingAvatar">
-      <header className="App-header">
-        {/* <p>{debug}</p> */}
-        {/* <div className="LabelPair">
+      <div className="container">
+        {" "}
+        <header className="App-header">
+          {/* <p>{debug}</p> */}
+          {/* <div className="LabelPair">
           <label>Avatar ID </label>
           <input
             className="InputField2"
@@ -258,7 +262,7 @@ function App() {
             onChange={(v) => setAvatarId(v.target.value)}
           />
         </div> */}
-        {/* <div className="LabelPair">
+          {/* <div className="LabelPair">
           <label>Voice ID</label>
           <input
             className="InputField2"
@@ -268,58 +272,59 @@ function App() {
           />
         </div> */}
 
-        <div className="MediaPlayer">
-          <video
-            playsInline
-            autoPlay
-            width={`100%`}
-            height={400}
-            ref={mediaStream}
-            onCanPlay={() => {
-              setCanPlay(true);
-            }}
-          />
-          {/* {canPlay && <CanvasRender videoRef={mediaStream} />} */}
-        </div>
-        <div className="Actions">
-          <button onClick={handleChatGPT}>
-            <img
-              src="https://cdn4.iconfinder.com/data/icons/mobile-ui-outline-2/64/Mobile_UI_2-13-1024.png"
-              alt="New Chat Icon"
-              className="icon"
+          <div className="MediaPlayer">
+            <video
+              playsInline
+              autoPlay
+              width={`100%`}
+              height={400}
+              ref={mediaStream}
+              onCanPlay={() => {
+                setCanPlay(true);
+              }}
             />
-          </button>
-          <input
-            className="InputField"
-            placeholder="Let's chat!"
-            value={chatGPTText}
-            onChange={(v) => setChatGPTText(v.target.value)}
-          />
+            {/* {canPlay && <CanvasRender videoRef={mediaStream} />} */}
+          </div>
+          <div className="Actions">
+            <button onClick={handleChatGPT}>
+              <img
+                src="https://cdn4.iconfinder.com/data/icons/mobile-ui-outline-2/64/Mobile_UI_2-13-1024.png"
+                alt="New Chat Icon"
+                className="icon"
+              />
+            </button>
+            <input
+              className="InputField"
+              placeholder="Let's chat!"
+              value={chatGPTText}
+              onChange={(v) => setChatGPTText(v.target.value)}
+            />
 
-          <button onClick={recording ? stopRecording : startRecording}>
-            <img
-              src="https://cdn1.iconfinder.com/data/icons/creative-commons-5/20/outline_miscellaneous-microphone-1024.png"
-              alt="Microphone Icon"
-              className="icon"
-            />
-            {/* {recording ? "Stop Recording" : "Start Recording"} */}
-          </button>
-        </div>
-        <div className="Actions">
-          {/* <input
+            <button onClick={recording ? stopRecording : startRecording}>
+              <img
+                src="https://cdn1.iconfinder.com/data/icons/creative-commons-5/20/outline_miscellaneous-microphone-1024.png"
+                alt="Microphone Icon"
+                className="icon"
+              />
+              {/* {recording ? "Stop Recording" : "Start Recording"} */}
+            </button>
+          </div>
+          <div className="Actions">
+            {/* <input
             className="InputField"
             placeholder="Type something for the avatar to say"
             value={text}
             onChange={(v) => setText(v.target.value)}
           /> */}
-          <button onClick={grab} className="startBtn">
-            Start Chat
-          </button>
-          {/* <button onClick={handleSpeak}>Speak</button> */}
-          {/* <button onClick={handleInterrupt}>Interrupt</button> */}
-          {/* <button onClick={stop}>Stop</button> */}
-        </div>
-      </header>
+            <button onClick={grab} className="startBtn">
+              Start Chat
+            </button>
+            {/* <button onClick={handleSpeak}>Speak</button> */}
+            {/* <button onClick={handleInterrupt}>Interrupt</button> */}
+            {/* <button onClick={stop}>Stop</button> */}
+          </div>
+        </header>
+      </div>
     </div>
   );
 }

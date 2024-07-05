@@ -1,5 +1,13 @@
+/* App.css */
+
 .HeyGenStreamingAvatar {
   text-align: center;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -9,14 +17,13 @@
 }
 
 .App-header {
-  /* background-color: #282c34; */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #333;
 }
 
 .App-link {
@@ -36,10 +43,9 @@
   display: flex;
   height: 400px;
   justify-content: space-between;
-  /* margin-top: 50px; */
   width: 100%;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 20px auto;
+  position: relative;
 }
 
 .Actions {
@@ -52,15 +58,12 @@
 }
 
 .container {
-  width: 350px;
-  margin-left: auto;
-  margin-right: auto;
-  @media (min-width: 450px) {
-    width: 450px;
-  }
-  @media (min-width: 768px) {
-    width: 768px;
-  }
+  width: 90%;
+  max-width: 800px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
 .InputField {
@@ -70,12 +73,87 @@
   font-size: 16px;
   outline: none;
   transition: border-color 0.3s ease;
-  margin: 0 10px; /* Отступ для симметрии */
+  margin: 0 10px; /* Symmetrical margin */
 }
 
 .InputField:hover,
 .InputField:focus {
   border-color: #5b0e5b;
+}
+
+.icon {
+  width: 42px; /* Icon width */
+  height: 42px; /* Icon height */
+}
+
+.startBtn {
+  width: 100px;
+  font-size: 12px;
+}
+
+.selectWrapper {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.select {
+  position: relative;
+}
+
+.selectTitle {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.selectList {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding-inline-start: 0;
+}
+
+.selectItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.selectItem:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.selectImg {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 10px;
+}
+
+.listName {
+  color: #333;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .InputField2 {
@@ -86,17 +164,64 @@
 
 .LabelPair {
   height: 50px;
-  display: row;
+  display: flex;
   flex-direction: row;
   align-items: start;
 }
-
-.icon {
-  width: 42px; /* Ширина иконок */
-  height: 42px; /* Высота иконок */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.startBtn {
-  width: 100px;
-  font-size: 12px;
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.MediaPlayer {
+  margin-bottom: 20px;
+}
+
+.Actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.Actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.Actions .InputField {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1;
+  margin: 0 5px;
+  outline: none;
+}
+
+.Actions .icon {
+  width: 30px;
+  height: 30px;
+}
+
+.Actions .startBtn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.Actions .startBtn.stopBtn {
+  background-color: #dc3545;
 }

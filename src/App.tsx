@@ -23,6 +23,7 @@ function App() {
   const [text, setText] = useState<string>("");
   const [chatGPTText, setChatGPTText] = useState<string>("");
   const [avatarId, setAvatarId] = useState<string>(""); // Set your default avatar ID
+
   const [voiceId, setVoiceId] = useState<string>(""); // Set your default voice ID
   const [data, setData] = useState<NewSessionData>();
   const [initialized, setInitialized] = useState(false); // Track initialization
@@ -33,16 +34,14 @@ function App() {
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const [canPlay, setCanPlay] = useState(false);
+  const [sessionStarted, setSessionStarted] = useState(false); // Track session state
+  const [selectedAssistant, setSelectedAssistant] = useState<string>(""); // New state
 
   async function fetchAccessToken() {
     try {
-      const response = await fetch(
-        "https://heygenavatar-server.onrender.com/get-access-token",
-
-        {
-          method: "POST",
-        }
-      );
+      const response = await fetch("http://localhost:3001/get-access-token", {
+        method: "POST",
+      });
       const result = await response.json();
       const token = result.token; // Access the token correctly
       console.log("Access Token:", token); // Log the token to verify
@@ -62,6 +61,7 @@ function App() {
     }
 
     try {
+      console.log("Starting session with avatarId:", avatarId);
       const res = await avatar.current.createStartAvatar(
         {
           newSessionRequest: {
@@ -74,6 +74,7 @@ function App() {
       );
       setData(res);
       setStream(avatar.current.mediaStream);
+      setSessionStarted(true); // Set session started to true
     } catch (error) {
       console.error("Error starting avatar session:", error);
     }
@@ -110,6 +111,7 @@ function App() {
       { stopSessionRequest: { sessionId: data?.sessionId } },
       setDebug
     );
+    setSessionStarted(false); // Set session started to false
   }
 
   async function handleSpeak() {
@@ -247,32 +249,63 @@ function App() {
     }
   };
 
+  const handleAssistantSelect = (id: string) => {
+    setAvatarId(id);
+    console.log("Selected avatarId:", id); // Log selected avatar ID
+  };
+
   return (
     <div className="HeyGenStreamingAvatar">
       <div className="container">
-        {" "}
         <header className="App-header">
-          {/* <p>{debug}</p> */}
-          {/* <div className="LabelPair">
-          <label>Avatar ID </label>
-          <input
-            className="InputField2"
-            placeholder="Avatar ID"
-            value={avatarId}
-            onChange={(v) => setAvatarId(v.target.value)}
-          />
-        </div> */}
-          {/* <div className="LabelPair">
-          <label>Voice ID</label>
-          <input
-            className="InputField2"
-            placeholder="Voice ID"
-            value={voiceId}
-            onChange={(v) => setVoiceId(v.target.value)}
-          />
-        </div> */}
-
           <div className="MediaPlayer">
+            {!sessionStarted && (
+              <div className="selectWrapper">
+                <div className="select">
+                  <h2 className="selectTitle">Please choose your assistant</h2>
+                  <ul className="selectList">
+                    <li
+                      className={`selectItem ${
+                        selectedAssistant === "Anna_public_3_20240108"
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        handleAssistantSelect("Anna_public_3_20240108")
+                      }
+                    >
+                      <img
+                        src="../Capture.png"
+                        alt="assistant-1 pic"
+                        className="selectImg"
+                        assistant-id="Anna_public_3_20240108"
+                        width="150px"
+                      />
+                      <span className="listName">Anna</span>
+                    </li>
+                    <li
+                      className={`selectItem ${
+                        selectedAssistant === "josh_lite3_20230714"
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        handleAssistantSelect("josh_lite3_20230714")
+                      }
+                    >
+                      <img
+                        src="../Capture3.png"
+                        alt="assistant-2 pic"
+                        className="selectImg"
+                        assistant-id="josh_lite3_20230714"
+                        width="150px"
+                      />
+                      <span className="listName">Josh</span>
+                    </li>
+                  </ul>{" "}
+                </div>
+              </div>
+            )}
             <video
               playsInline
               autoPlay
@@ -283,13 +316,12 @@ function App() {
                 setCanPlay(true);
               }}
             />
-            {/* {canPlay && <CanvasRender videoRef={mediaStream} />} */}
           </div>
           <div className="Actions">
             <button onClick={handleChatGPT}>
               <img
-                src="https://cdn4.iconfinder.com/data/icons/mobile-ui-outline-2/64/Mobile_UI_2-13-1024.png"
-                alt="New Chat Icon"
+                src="../send-outline-512.webp"
+                alt="Send Icon"
                 className="icon"
               />
             </button>
@@ -298,30 +330,23 @@ function App() {
               placeholder="Let's chat!"
               value={chatGPTText}
               onChange={(v) => setChatGPTText(v.target.value)}
+              autoFocus // Set focus on input field
             />
-
             <button onClick={recording ? stopRecording : startRecording}>
               <img
                 src="https://cdn1.iconfinder.com/data/icons/creative-commons-5/20/outline_miscellaneous-microphone-1024.png"
                 alt="Microphone Icon"
                 className="icon"
               />
-              {/* {recording ? "Stop Recording" : "Start Recording"} */}
             </button>
           </div>
           <div className="Actions">
-            {/* <input
-            className="InputField"
-            placeholder="Type something for the avatar to say"
-            value={text}
-            onChange={(v) => setText(v.target.value)}
-          /> */}
-            <button onClick={grab} className="startBtn">
-              Start Chat
+            <button
+              onClick={sessionStarted ? stop : grab}
+              className={`startBtn ${sessionStarted ? "stopBtn" : ""}`}
+            >
+              {sessionStarted ? "Stop Chat" : "Start Chat"}
             </button>
-            {/* <button onClick={handleSpeak}>Speak</button> */}
-            {/* <button onClick={handleInterrupt}>Interrupt</button> */}
-            {/* <button onClick={stop}>Stop</button> */}
           </div>
         </header>
       </div>

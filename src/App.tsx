@@ -39,9 +39,12 @@ function App() {
 
   async function fetchAccessToken() {
     try {
-      const response = await fetch("http://localhost:3001/get-access-token", {
-        method: "POST",
-      });
+      const response = await fetch(
+        "https://heygenavatar-server.onrender.com/get-access-token",
+        {
+          method: "POST",
+        }
+      );
       const result = await response.json();
       const token = result.token; // Access the token correctly
       console.log("Access Token:", token); // Log the token to verify

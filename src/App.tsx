@@ -10,7 +10,7 @@ import { CanvasRender } from "./components/canvas-render";
 
 // Enter your OpenAI key here
 const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
-
+const API_KEY = process.env.REACT_APP_API_KEY;
 // Set up OpenAI w/ API Key
 const openai = new OpenAI({
   apiKey: openaiApiKey,
@@ -37,16 +37,39 @@ function App() {
   const [sessionStarted, setSessionStarted] = useState(false); // Track session state
   const [selectedAssistant, setSelectedAssistant] = useState<string>(""); // New state
 
+  // async function fetchAccessToken() {
+  //   try {
+  //     const response = await fetch(
+  //       "https://heygenavatar-server.onrender.com/get-access-token",
+  //       {
+  //         method: "POST",
+  //       }
+  //     );
+  //     const result = await response.json();
+  //     const token = result.token; // Access the token correctly
+  //     console.log("Access Token:", token); // Log the token to verify
+  //     return token;
+  //   } catch (error) {
+  //     console.error("Error fetching access token:", error);
+  //     return "";
+  //   }
+  // }
+
   async function fetchAccessToken() {
     try {
       const response = await fetch(
-        "https://heygenavatar-server.onrender.com/get-access-token",
+        "https://api.heygen.com/v1/streaming.create_token",
         {
           method: "POST",
+          headers: {
+            "x-api-key": `${API_KEY}`,
+          },
         }
       );
       const result = await response.json();
-      const token = result.token; // Access the token correctly
+      console.log("🆑  result:", result);
+
+      const token = result.data.token; // Access the token correctly
       console.log("Access Token:", token); // Log the token to verify
       return token;
     } catch (error) {
@@ -269,41 +292,41 @@ function App() {
                   <ul className="selectList">
                     <li
                       className={`selectItem ${
-                        selectedAssistant === "Anna_public_3_20240108"
+                        selectedAssistant === "Kristin_public_2_20240108"
                           ? "selected"
                           : ""
                       }`}
                       onClick={() =>
-                        handleAssistantSelect("Anna_public_3_20240108")
+                        handleAssistantSelect("Kristin_public_2_20240108")
                       }
                     >
                       <img
-                        src="../Capture.png"
+                        src="https://files2.heygen.ai/avatar/v3/f94222a03cee4adaa110761a374cfadc_13181/preview_talk_5_medium.webp"
                         alt="assistant-1 pic"
                         className="selectImg"
-                        assistant-id="Anna_public_3_20240108"
+                        assistant-id="Kristin_public_2_20240108"
                         width="150px"
                       />
                       <span className="listName">Anna</span>
                     </li>
                     <li
                       className={`selectItem ${
-                        selectedAssistant === "josh_lite3_20230714"
+                        selectedAssistant === "Lily_public_pro1_20230614"
                           ? "selected"
                           : ""
                       }`}
                       onClick={() =>
-                        handleAssistantSelect("josh_lite3_20230714")
+                        handleAssistantSelect("Lily_public_pro1_20230614")
                       }
                     >
                       <img
-                        src="../Capture3.png"
+                        src="https://files2.heygen.ai/avatar/v3/51267c0f0f2045518a8c66bb1709bf2a_2654/preview_target_medium.webp"
                         alt="assistant-2 pic"
                         className="selectImg"
-                        assistant-id="josh_lite3_20230714"
+                        assistant-id="Lily_public_pro1_20230614"
                         width="150px"
                       />
-                      <span className="listName">Josh</span>
+                      <span className="listName">Lily</span>
                     </li>
                   </ul>{" "}
                 </div>

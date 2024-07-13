@@ -66,6 +66,7 @@ function App() {
           },
         }
       );
+      console.log("a",API_KEY);
       const result = await response.json();
       console.log("🆑  result:", result);
 

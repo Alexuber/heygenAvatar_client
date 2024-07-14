@@ -32,6 +32,9 @@ function App() {
   const [canPlay, setCanPlay] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [selectedAssistant, setSelectedAssistant] = useState<string>("");
+  const [dialogue, setDialogue] = useState<{ role: string; content: string }[]>(
+    []
+  );
 
   async function fetchAccessToken() {
     try {
@@ -189,6 +192,13 @@ function App() {
         });
 
       setChatGPTText(""); // Clear the input text after sending
+
+      // Append new message to dialogue state
+      setDialogue((prevDialogue) => [
+        ...prevDialogue,
+        { role: "user", content: chatGPTText },
+        { role: "assistant", content: chatGPTResponse },
+      ]);
     } catch (error) {
       console.error("Error communicating with ChatGPT:", error);
     }
@@ -341,6 +351,13 @@ function App() {
                 setCanPlay(true);
               }}
             />
+            <div className="Dialogue">
+              {dialogue.map((message, index) => (
+                <div key={index} className={`message ${message.role}`}>
+                  {message.content}
+                </div>
+              ))}
+            </div>
           </div>
           <div className="Actions">
             <button

@@ -268,3 +268,47 @@
   color: #e53935;
   border: 1px solid #e53935;
 }
+.Dialogue {
+  display: flex;
+  flex-direction: column-reverse; /* Display messages from bottom to top */
+  overflow-y: auto; /* Allow scrolling if messages exceed container */
+  max-height: 130px; /* Adjust height as needed */
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  width: 80%;
+  background-color: #00000029;
+  padding-top: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 8px;
+}
+
+.message {
+  padding: 2px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.message.user {
+  align-self: flex-start;
+  background-color: #007bff;
+  color: white;
+}
+
+.message.assistant {
+  align-self: flex-end;
+  background-color: #f0f0f0;
+  color: black;
+}
+.Dialogue::-webkit-scrollbar {
+  display: none; /* Скрыть скроллбар вебкита (Chrome, Safari, etc.) */
+}
+
+.Dialogue {
+  scrollbar-width: none; /* Скрыть скроллбар Firefox */
+}

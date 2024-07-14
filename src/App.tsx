@@ -6,12 +6,9 @@ import {
 } from "@heygen/streaming-avatar";
 import "./App.css";
 import OpenAI from "openai";
-import { CanvasRender } from "./components/canvas-render";
 
-// Enter your OpenAI key here
 const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 const API_KEY = process.env.REACT_APP_API_KEY;
-// Set up OpenAI w/ API Key
 const openai = new OpenAI({
   apiKey: openaiApiKey,
   dangerouslyAllowBrowser: true,
@@ -22,38 +19,19 @@ function App() {
   const [debug, setDebug] = useState<string>();
   const [text, setText] = useState<string>("");
   const [chatGPTText, setChatGPTText] = useState<string>("");
-  const [avatarId, setAvatarId] = useState<string>(""); // Set your default avatar ID
-
-  const [voiceId, setVoiceId] = useState<string>(""); // Set your default voice ID
+  const [avatarId, setAvatarId] = useState<string>("");
+  const [voiceId, setVoiceId] = useState<string>("");
   const [data, setData] = useState<NewSessionData>();
-  const [initialized, setInitialized] = useState(false); // Track initialization
-  const [recording, setRecording] = useState(false); // Track recording state
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Store recorded audio
+  const [initialized, setInitialized] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaStream = useRef<HTMLVideoElement>(null);
   const avatar = useRef<StreamingAvatarApi | null>(null);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const [canPlay, setCanPlay] = useState(false);
-  const [sessionStarted, setSessionStarted] = useState(false); // Track session state
-  const [selectedAssistant, setSelectedAssistant] = useState<string>(""); // New state
-
-  // async function fetchAccessToken() {
-  //   try {
-  //     const response = await fetch(
-  //       "https://heygenavatar-server.onrender.com/get-access-token",
-  //       {
-  //         method: "POST",
-  //       }
-  //     );
-  //     const result = await response.json();
-  //     const token = result.token; // Access the token correctly
-  //     console.log("Access Token:", token); // Log the token to verify
-  //     return token;
-  //   } catch (error) {
-  //     console.error("Error fetching access token:", error);
-  //     return "";
-  //   }
-  // }
+  const [sessionStarted, setSessionStarted] = useState(false);
+  const [selectedAssistant, setSelectedAssistant] = useState<string>("");
 
   async function fetchAccessToken() {
     try {
@@ -79,6 +57,10 @@ function App() {
   }
 
   async function grab() {
+    if (!selectedAssistant) {
+      setDebug("Please select an assistant first.");
+      return;
+    }
     await updateToken();
 
     if (!avatar.current) {
@@ -129,15 +111,26 @@ function App() {
   }
 
   async function stop() {
-    if (!initialized || !avatar.current) {
-      setDebug("Avatar API not initialized");
+    if (!initialized || !avatar.current || !data || !data.sessionId) {
+      console.error("Avatar API not initialized or session not started");
       return;
     }
-    await avatar.current.stopAvatar(
-      { stopSessionRequest: { sessionId: data?.sessionId } },
-      setDebug
-    );
-    setSessionStarted(false); // Set session started to false
+
+    try {
+      console.log("Stopping session with sessionId:", data.sessionId);
+      await avatar.current.stopAvatar({
+        stopSessionRequest: {
+          sessionId: data.sessionId,
+        },
+      });
+      console.log("Session stopped successfully");
+
+      setSessionStarted(false); // Set session started to false
+      setChatGPTText("");
+      setData(undefined); // Clear session data
+    } catch (error) {
+      console.error("Error stopping avatar session:", error);
+    }
   }
 
   async function handleSpeak() {
@@ -172,7 +165,6 @@ function App() {
 
     try {
       const response = await openai.chat.completions.create({
-        // Send the user input to ChatGPT
         model: "gpt-4",
         messages: [
           { role: "system", content: "You are a helpful assistant." },
@@ -183,12 +175,11 @@ function App() {
       const chatGPTResponse = String(response.choices[0].message.content);
       console.log("ChatGPT Response:", chatGPTResponse);
 
-      if (!initialized || !avatar.current) {
-        setDebug("Avatar API not initialized");
+      if (!initialized || !avatar.current || !data?.sessionId) {
+        setDebug("Avatar API not initialized or session not started");
         return;
       }
 
-      // Send the ChatGPT response to the Streaming Avatar
       await avatar.current
         .speak({
           taskRequest: { text: chatGPTResponse, sessionId: data?.sessionId },
@@ -196,6 +187,8 @@ function App() {
         .catch((e) => {
           setDebug(e.message);
         });
+
+      setChatGPTText(""); // Clear the input text after sending
     } catch (error) {
       console.error("Error communicating with ChatGPT:", error);
     }
@@ -269,7 +262,6 @@ function App() {
       const transcription = response.text;
       console.log("Transcription:", transcription);
       setChatGPTText(transcription);
-      console.log(chatGPTText);
     } catch (error) {
       console.error("Error transcribing audio:", error);
     }
@@ -277,7 +269,14 @@ function App() {
 
   const handleAssistantSelect = (id: string) => {
     setAvatarId(id);
+    setSelectedAssistant(id);
     console.log("Selected avatarId:", id); // Log selected avatar ID
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleChatGPT();
+    }
   };
 
   return (
@@ -328,7 +327,7 @@ function App() {
                       />
                       <span className="listName">Lily</span>
                     </li>
-                  </ul>{" "}
+                  </ul>
                 </div>
               </div>
             )}
@@ -344,32 +343,65 @@ function App() {
             />
           </div>
           <div className="Actions">
-            <button onClick={handleChatGPT}>
-              <img
-                src="../send-outline-512.webp"
-                alt="Send Icon"
-                className="icon"
-              />
+            <button
+              onClick={handleChatGPT}
+              style={{
+                borderRadius: chatGPTText ? "50%" : "none",
+                border: chatGPTText ? "2px solid green" : "none",
+              }}
+              disabled={!sessionStarted || !selectedAssistant}
+            >
+              <svg
+                className={`icon ${chatGPTText ? "highlight" : ""}`}
+                width="30"
+                height="30"
+                style={{
+                  fill: chatGPTText ? "green" : "black",
+                }}
+              >
+                <use href="/symbol-defs.svg#icon-circle-right"></use>
+              </svg>
             </button>
             <input
               className="InputField"
               placeholder="Let's chat!"
               value={chatGPTText}
               onChange={(v) => setChatGPTText(v.target.value)}
+              onKeyDown={handleKeyDown}
               autoFocus // Set focus on input field
+              disabled={!sessionStarted || !selectedAssistant}
             />
-            <button onClick={recording ? stopRecording : startRecording}>
-              <img
-                src="https://cdn1.iconfinder.com/data/icons/creative-commons-5/20/outline_miscellaneous-microphone-1024.png"
-                alt="Microphone Icon"
-                className="icon"
-              />
+            <button
+              onClick={recording ? stopRecording : startRecording}
+              style={{
+                borderRadius: recording ? "50%" : "none",
+                border: recording ? "2px solid red" : "none",
+              }}
+              disabled={!sessionStarted || !selectedAssistant}
+            >
+              <svg
+                className={`icon ${recording ? "highlight" : ""}`}
+                width="20"
+                height="20"
+                style={{
+                  fill: recording ? "red" : "black",
+                }}
+              >
+                <use
+                  href={
+                    recording
+                      ? "/symbol-defs.svg#icon-stop2"
+                      : "/symbol-defs.svg#icon-mic"
+                  }
+                ></use>
+              </svg>
             </button>
           </div>
           <div className="Actions">
             <button
               onClick={sessionStarted ? stop : grab}
               className={`startBtn ${sessionStarted ? "stopBtn" : ""}`}
+              disabled={!selectedAssistant}
             >
               {sessionStarted ? "Stop Chat" : "Start Chat"}
             </button>
